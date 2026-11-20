@@ -1,0 +1,53 @@
+name: AgentFlow AI CI Pipeline
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master, develop]
+
+jobs:
+  verify:
+    name: Lint, Test, TypeCheck & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Node Monorepo Dependencies
+        run: |
+          npm ci --ignore-scripts || npm install
+
+      - name: Build Shared Package
+        run: |
+          cd packages/shared && npm run build
+
+      - name: TypeCheck & Build Backend API
+        run: |
+          cd apps/api && npm run build
+
+      - name: TypeCheck & Build Frontend Web
+        run: |
+          cd apps/web && npm run build
+
+      - name: Run Backend Tests
+        run: |
+          cd apps/api && npx jest tests/tools_ssrf.test.ts tests/workflow_validation.test.ts
+
+      - name: Install Python AI Dependencies & Run Pytest
+        run: |
+          cd apps/ai-service
+          pip install -r requirements.txt
+          python -m pytest tests/test_graph.py
