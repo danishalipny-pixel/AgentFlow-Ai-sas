@@ -22,11 +22,12 @@ export const config = {
   jwtRefreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '30d',
   encryptionKey: process.env.ENCRYPTION_KEY || '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', // 32 bytes in hex
 
-  // AI Service
-  aiServiceUrl: process.env.AI_SERVICE_URL || 'http://localhost:8000',
-  openaiApiKey: process.env.OPENAI_API_KEY || '',
-  defaultModel: process.env.DEFAULT_AI_MODEL || 'gpt-4o-mini',
-  aiTimeoutMs: parseInt(process.env.AI_EXECUTION_TIMEOUT_SECONDS || '120', 10) * 1000,
+  // AI Service & Local Ollama
+  aiServiceUrl: process.env.AI_SERVICE_URL || 'http://localhost:5202',
+  ollamaBaseUrl: process.env.OLLAMA_BASE_URL || 'http://localhost:11434',
+  defaultModel: process.env.DEFAULT_AI_MODEL || 'qwen2.5:7b',
+  coderModel: process.env.CODER_AI_MODEL || 'qwen2.5-coder:7b',
+  aiTimeoutMs: parseInt(process.env.AI_EXECUTION_TIMEOUT_SECONDS || '180', 10) * 1000,
   
   // Safety
   enforceApprovalForMutations: process.env.ENFORCE_APPROVAL_FOR_MUTATIONS !== 'false',

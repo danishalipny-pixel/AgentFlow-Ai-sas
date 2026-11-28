@@ -55,7 +55,7 @@ export const AgentsPage: React.FC = () => {
   const [role, setRole] = useState('Research Agent');
   const [description, setDescription] = useState('');
   const [systemPrompt, setSystemPrompt] = useState('');
-  const [model, setModel] = useState('gpt-4o-mini');
+  const [model, setModel] = useState('qwen2.5:7b');
   const [temperature, setTemperature] = useState(0.2);
   const [maxExecutionSteps, setMaxExecutionSteps] = useState(15);
   const [timeoutSeconds, setTimeoutSeconds] = useState(180);
@@ -338,6 +338,9 @@ export const AgentsPage: React.FC = () => {
                   <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-white/5 border border-white/10 text-gray-300">
                     {agent.model}
                   </span>
+                  <span className="text-[11px] px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-semibold">
+                    $0.00 Local
+                  </span>
                   <span className="text-[11px] px-2 py-0.5 rounded bg-white/5 border border-white/10 text-gray-400">
                     temp: {agent.temperature}
                   </span>
@@ -465,14 +468,15 @@ export const AgentsPage: React.FC = () => {
             />
 
             <Select
-              label="Underlying LLM Model"
+              label="Local LLM Model (Ollama)"
               value={model}
               onChange={(e) => setModel(e.target.value)}
             >
-              <option value="gpt-4o-mini">GPT-4o Mini (Ultra Fast & Efficient)</option>
-              <option value="gpt-4o">GPT-4o (High Reasoning Capability)</option>
-              <option value="gpt-3.5-turbo">GPT-3.5 Turbo (Legacy Speed)</option>
-              <option value="claude-3-5-sonnet">Claude 3.5 Sonnet (Analytical Depth)</option>
+              <option value="qwen2.5:7b">Qwen 2.5 7B (Default General Purpose — Free Local)</option>
+              <option value="qwen2.5-coder:7b">Qwen 2.5 Coder 7B (Code, Architecture, Debugging)</option>
+              <option value="qwen2.5:3b">Qwen 2.5 3B (Lightweight & High-Speed CPU)</option>
+              <option value="llama3.2:3b">Llama 3.2 3B (Fast Reasoning — Local CPU)</option>
+              <option value="mistral:7b">Mistral 7B (Local Instruction Following)</option>
             </Select>
           </div>
 

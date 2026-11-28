@@ -3,6 +3,8 @@ import pytest
 from app.agents.state import AgentState
 from app.agents.graph import MultiAgentOrchestrator
 from app.tools.registry import ToolRegistry
+from app.services.knowledge_service import LocalKnowledgeEngine
+from app.services.ollama_service import OllamaService
 
 def test_standard_task_completes():
     state = AgentState(
@@ -35,3 +37,21 @@ def test_safe_calculator():
 def test_calculator_blocks_injections():
     with pytest.raises(ValueError):
         ToolRegistry.calculate("__import__('os').system('dir')")
+
+def test_local_knowledge_engine_search():
+    LocalKnowledgeEngine.index_document(
+        organization_id="test-org",
+        doc_id="doc-1",
+        title="Refund Policy 2026",
+        text="Customers can request a complete refund within 30 days of purchase for unused licenses.",
+    )
+    results = LocalKnowledgeEngine.search("test-org", "refund request within 30 days")
+    assert len(results) > 0
+    assert results[0]["title"] == "Refund Policy 2026"
+    assert "refund" in results[0]["content"].lower()
+
+def test_ollama_model_role_selection():
+    coder_model = OllamaService.get_model_for_role("Developer Agent")
+    assert "coder" in coder_model.lower()
+    general_model = OllamaService.get_model_for_role("Research Agent")
+    assert "qwen" in general_model.lower()

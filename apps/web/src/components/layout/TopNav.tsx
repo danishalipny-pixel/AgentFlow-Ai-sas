@@ -12,6 +12,9 @@ import {
   Settings,
   Shield,
   Layers,
+  Cpu,
+  Zap,
+  AlertTriangle,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { api } from '../../services/api';
@@ -33,6 +36,30 @@ export const TopNav: React.FC<TopNavProps> = ({ onToggleSidebar, onOpenNewTaskMo
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [modelStatus, setModelStatus] = useState<any>({
+    connected: false,
+    active_model: 'qwen2.5:7b',
+    coder_model: 'qwen2.5-coder:7b',
+    installed_models: ['qwen2.5:7b', 'qwen2.5-coder:7b'],
+    is_local_only: true,
+  });
+  const [showModelModal, setShowModelModal] = useState(false);
+
+  useEffect(() => {
+    const fetchModelStatus = async () => {
+      try {
+        const res = await api.get('/models/status');
+        if (res.data?.success && res.data.data) {
+          setModelStatus(res.data.data);
+        }
+      } catch {
+        // Handled silently
+      }
+    };
+    fetchModelStatus();
+    const modelInterval = setInterval(fetchModelStatus, 15000);
+    return () => clearInterval(modelInterval);
+  }, []);
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -156,6 +183,91 @@ export const TopNav: React.FC<TopNavProps> = ({ onToggleSidebar, onOpenNewTaskMo
 
       {/* Right: Quick Action, Notifications, User Menu */}
       <div className="flex items-center gap-3">
+        {/* Local Ollama Model Status Pill */}
+        <div className="relative">
+          <button
+            onClick={() => setShowModelModal(!showModelModal)}
+            className={`hidden md:flex items-center gap-2 px-2.5 py-1.5 rounded-lg border text-xs transition-colors ${
+              modelStatus?.connected
+                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20'
+                : 'bg-amber-500/10 border-amber-500/30 text-amber-400 hover:bg-amber-500/20'
+            }`}
+            title="Click to view Local LLM inference status and CPU performance"
+          >
+            {modelStatus?.connected ? (
+              <>
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <Zap className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="font-mono font-semibold max-w-[130px] truncate">
+                  {modelStatus?.active_model || 'qwen2.5:7b'}
+                </span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold uppercase tracking-wider">
+                  $0.00 CPU
+                </span>
+              </>
+            ) : (
+              <>
+                <span className="w-2 h-2 rounded-full bg-amber-400" />
+                <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+                <span className="font-mono text-xs">Ollama Offline</span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold uppercase">
+                  Setup
+                </span>
+              </>
+            )}
+          </button>
+
+          {showModelModal && (
+            <div className="absolute right-0 mt-2 w-80 rounded-2xl glass-panel border border-white/10 shadow-2xl p-4 z-50 animate-in fade-in duration-150 text-xs">
+              <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-3">
+                <div className="flex items-center gap-2">
+                  <Cpu className="w-4 h-4 text-gold" />
+                  <h4 className="font-bold text-white uppercase tracking-wider text-[11px]">Local AI Architecture</h4>
+                </div>
+                <Badge variant={modelStatus?.connected ? 'emerald' : 'amber'} size="sm">
+                  {modelStatus?.connected ? 'Online' : 'Standby'}
+                </Badge>
+              </div>
+
+              <div className="space-y-2.5 text-gray-300">
+                <div className="flex justify-between items-center py-1 border-b border-white/5">
+                  <span className="text-gray-400">Runtime:</span>
+                  <span className="font-mono text-white">Ollama (127.0.0.1:11434)</span>
+                </div>
+                <div className="flex justify-between items-center py-1 border-b border-white/5">
+                  <span className="text-gray-400">Primary General LLM:</span>
+                  <span className="font-mono text-emerald-400">{modelStatus?.active_model || 'qwen2.5:7b'}</span>
+                </div>
+                <div className="flex justify-between items-center py-1 border-b border-white/5">
+                  <span className="text-gray-400">Code/Architect LLM:</span>
+                  <span className="font-mono text-cyan-400">{modelStatus?.coder_model || 'qwen2.5-coder:7b'}</span>
+                </div>
+                <div className="flex justify-between items-center py-1 border-b border-white/5">
+                  <span className="text-gray-400">Cloud Cost / Token Fee:</span>
+                  <span className="font-mono text-emerald-400 font-bold">$0.00 (100% Free Local Inference)</span>
+                </div>
+                <div className="flex justify-between items-center py-1 border-b border-white/5">
+                  <span className="text-gray-400">Hardware Profile:</span>
+                  <span className="text-gray-200">CPU Thread Optimization (No GPU Required)</span>
+                </div>
+              </div>
+
+              {!modelStatus?.connected && (
+                <div className="mt-3 p-2.5 rounded-xl bg-black/50 border border-amber-500/30 text-[11px] space-y-1 text-gray-300">
+                  <p className="font-bold text-amber-300 flex items-center gap-1.5">
+                    <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+                    How to start local inference:
+                  </p>
+                  <p className="text-gray-400">Open PowerShell or Terminal and run:</p>
+                  <pre className="bg-black/60 p-1.5 rounded text-[10px] text-gold font-mono">
+                    ollama serve&#10;ollama pull qwen2.5:7b
+                  </pre>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
         {onOpenNewTaskModal && (
           <Button
             variant="gold"

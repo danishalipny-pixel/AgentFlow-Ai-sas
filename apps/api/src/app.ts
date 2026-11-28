@@ -25,6 +25,7 @@ import analyticsRoutes from './routes/analytics.routes';
 import notificationsRoutes from './routes/notifications.routes';
 import subscriptionsRoutes from './routes/subscriptions.routes';
 import adminRoutes from './routes/admin.routes';
+import modelsRoutes from './routes/models.routes';
 
 export const createApp = (): Express => {
   const app = express();
@@ -88,6 +89,7 @@ export const createApp = (): Express => {
   app.use('/api/v1/notifications', notificationsRoutes);
   app.use('/api/v1/subscriptions', subscriptionsRoutes);
   app.use('/api/v1/admin', adminRoutes);
+  app.use('/api/v1/models', modelsRoutes);
 
   // Catch-all 404 handler
   app.use('*', (req: Request, res: Response) => {

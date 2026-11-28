@@ -75,6 +75,8 @@ desktop.ini
 # Uploads & Temp
 uploads/
 **/uploads/
+knowledge_store/
+**/knowledge_store/
 temp/
 **/temp/
 logs/

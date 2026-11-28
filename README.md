@@ -275,6 +275,17 @@ Open three terminal windows:
   # AI Service online at http://localhost:5202
   ```
 
+- **Terminal 4: Local Ollama Model Runtime (100% Free)**
+  ```bash
+  # Start local Ollama daemon
+  ollama serve
+
+  # Pull primary and coding models:
+  ollama pull qwen2.5:7b
+  ollama pull qwen2.5-coder:7b
+  # Ollama endpoint: http://localhost:11434
+  ```
+
 ### 6. Pre-Seeded Administrator Login
 - **Email**: `admin@agentflow.ai`
 - **Password**: `AdminSecurePassword123!`
@@ -290,12 +301,14 @@ Open three terminal windows:
 | `FRONTEND_PORT` | Frontend Vite web port | `5200` |
 | `AI_SERVICE_PORT` | Python FastAPI port | `5202` |
 | `AI_SERVICE_URL` | AI Service upstream URL | `http://localhost:5202` |
+| `OLLAMA_BASE_URL` | Local Ollama inference URL | `http://localhost:11434` |
+| `DEFAULT_AI_MODEL` | General-purpose supervisor local model | `qwen2.5:7b` |
+| `CODER_AI_MODEL` | Specialized coder local model | `qwen2.5-coder:7b` |
 | `CORS_ORIGIN` | Whitelisted frontend origin | `http://localhost:5200` |
 | `JWT_SECRET` | Secret key for signing access JWTs | Random 32+ character hex string |
 | `ENCRYPTION_KEY` | 32-byte hex key for AES-256-GCM | 64-character hex string |
 | `MONGO_URI` | MongoDB connection string | `mongodb://localhost:27017/agentflow` |
 | `REDIS_URI` | Redis connection string | `redis://localhost:6379` |
-| `OPENAI_API_KEY` | OpenAI API key for LLM generation | `sk-...` (Optional for local testing) |
 | `STRIPE_SECRET_KEY`| Stripe secret key for billing | `sk_test_...` (Optional) |
 | `SMTP_HOST` | Outbound email SMTP server | `smtp.example.com` (Optional) |
 

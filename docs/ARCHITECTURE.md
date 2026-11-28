@@ -20,9 +20,9 @@
 |                                                                                   |
 |  Nginx Reverse Proxy / Load Balancer (:80 / :443)                                 |
 |  Routes:                                                                          |
-|    - /api/v1/*   --> Node.js Backend API Service (:5000)                          |
-|    - /ai/*       --> Python FastAPI Multi-Agent Engine (:8000)                    |
-|    - /*          --> React Static Assets (HTML5 pushState)                        |
+|    - /api/v1/*   --> Node.js Backend API Service (:5201)                          |
+|    - /ai/*       --> Python FastAPI Multi-Agent Engine (:5202)                    |
+|    - /*          --> React Static Assets (HTML5 pushState :5200)                  |
 +-----------------------------------------------------------------------------------+
                          │                                    │
                          ▼                                    ▼
@@ -34,18 +34,20 @@
 |  - JWT Authentication Middleware   |   |  - LangGraph State Machine Graph         |
 |  - Multi-Tenant Isolation Scoping  |   |  - Supervisor Agent Decomposition        |
 |  - RBAC Hierarchy Engine           |   |  - 7 Specialized Worker Agent Personas   |
-|  - BullMQ Queue & Worker Engine    |   |  - Tool Execution Sandboxing             |
-|  - Human Approval State Store      |   |  - Human-in-the-Loop Checkpoint Gate     |
-|  - Audit Log Collector             |   |  - Structured Pydantic Output Synthesis  |
+|  - Model Status & Proxy Gateway    |   |  - TF-IDF Local Semantic Knowledge RAG   |
+|  - Human Approval State Store      |   |  - Tool Execution Sandboxing             |
+|  - Audit Log Collector             |   |  - Human-in-the-Loop Checkpoint Gate     |
+|  - $0.00 Financial Telemetry       |   |  - Structured Pydantic Output Synthesis  |
 +------------------------------------+   +------------------------------------------+
           │                 │                                   │
           ▼                 ▼                                   ▼
 +-------------------+ +---------------+             +-----------------------+
-|  DATABASE TIER    | |  CACHE TIER   |             |  EXTERNAL PROVIDERS   |
+|  DATABASE TIER    | |  CACHE TIER   |             |  LOCAL LLM RUNTIME    |
 |                   | |               |             |                       |
-|  MongoDB 7.0      | |  Redis 7.2    |             |  - OpenAI API (LLMs)  |
-|  (Mongoose Schema | |  (BullMQ Jobs |             |  - Stripe Payments    |
-|   + Indexes)      | |   & Session)  |             |  - SMTP Email Relay   |
+|  MongoDB 7.0      | |  Redis 7.2    |             |  - Ollama (:11434)    |
+|  (Mongoose Schema | |  (BullMQ Jobs |             |  - qwen2.5:7b (Base)  |
+|   + Indexes)      | |   & Session)  |             |  - qwen2.5-coder:7b   |
+|                   | |               |             |  (Zero Cloud API Fee) |
 +-------------------+ +---------------+             +-----------------------+
 ```
 

@@ -33,7 +33,24 @@ npm install
 npm run build:shared
 ```
 
-### 4. Configure Python AI Service
+### 4. Setup Local Ollama LLM (Zero Paid APIs)
+AGENTFLOW AI runs 100% locally with zero cloud API keys or billing dependencies.
+1. Download & install Ollama from [https://ollama.com](https://ollama.com).
+2. Start Ollama:
+   ```bash
+   ollama serve
+   ```
+3. Pull the recommended local models:
+   ```bash
+   # Primary general-purpose supervisor & specialist agent LLM:
+   ollama pull qwen2.5:7b
+
+   # High-reasoning coding & architecture LLM:
+   ollama pull qwen2.5-coder:7b
+   ```
+   *(For systems with lower RAM or ultra-fast CPU inference, `ollama pull qwen2.5:3b` is also supported).*
+
+### 5. Configure Python AI Service
 In a separate terminal or virtual environment:
 ```bash
 cd apps/ai-service
@@ -49,14 +66,14 @@ pip install -r requirements.txt
 cd ../..
 ```
 
-### 5. Setup Environment Variables
+### 6. Setup Environment Variables
 Copy the template file to `.env`:
 ```bash
 cp .env.example .env
 ```
-Adjust the ports or secrets as needed. For local development with zero external daemon requirements, the backend automatically provides an embedded in-memory MongoDB fallback.
+Adjust ports or secrets as needed. The backend automatically provides an embedded in-memory MongoDB fallback.
 
-### 6. Start Development Servers
+### 7. Start Development Servers
 
 You can launch the components in separate terminal windows:
 
@@ -64,7 +81,7 @@ You can launch the components in separate terminal windows:
   ```bash
   npm run dev:api
   ```
-  API runs at `http://localhost:5201` (or configured port)
+  API runs at `http://localhost:5201`
   Swagger Docs at `http://localhost:5201/api/v1/docs`
 
 - **Terminal 2 (Web Client)**:
@@ -78,6 +95,13 @@ You can launch the components in separate terminal windows:
   cd apps/ai-service
   python -m uvicorn app.main:app --host 127.0.0.1 --port 5202 --reload
   ```
+  AI Service online at `http://localhost:5202` (Docs at `http://localhost:5202/docs`)
+
+- **Terminal 4 (Local Ollama Engine)**:
+  ```bash
+  ollama serve
+  ```
+  Ollama local runtime at `http://localhost:11434`
 
 ---
 

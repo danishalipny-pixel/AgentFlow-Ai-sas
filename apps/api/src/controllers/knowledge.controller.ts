@@ -1,12 +1,14 @@
 import { Response, NextFunction } from 'express';
 import fs from 'fs';
 import path from 'path';
+import axios from 'axios';
 import { DocumentProcessingStatus } from '@agentflow/shared';
 import { AuthenticatedRequest } from '../middlewares/auth';
 import { KnowledgeDocument } from '../models';
 import { AppError } from '../middlewares/errorHandler';
 import { BillingService } from '../services/billing.service';
 import { AuditService } from '../services/audit.service';
+import { config } from '../config';
 
 export class KnowledgeController {
   public static async list(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
@@ -53,6 +55,22 @@ export class KnowledgeController {
         status: DocumentProcessingStatus.READY,
         uploaderId: req.user!._id,
       });
+
+      // Index asynchronously in local Python AI Knowledge Engine
+      axios
+        .post(
+          `${config.aiServiceUrl}/api/v1/knowledge/index`,
+          {
+            organization_id: req.organizationId,
+            document_id: doc._id.toString(),
+            title: doc.title,
+            content: textContent,
+          },
+          { timeout: 5000 }
+        )
+        .catch((err) => {
+          console.warn('[KnowledgeController] Local knowledge indexing notice:', err.message);
+        });
 
       await AuditService.record({
         organizationId: req.organizationId!,

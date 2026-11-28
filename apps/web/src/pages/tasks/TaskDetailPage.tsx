@@ -181,7 +181,9 @@ export const TaskDetailPage: React.FC = () => {
             </div>
             <div>
               <p className="text-xs font-bold text-white">{task.assignedAgentId?.name || 'Supervisor Agent'}</p>
-              <p className="text-[10px] text-gray-400 font-mono">{task.assignedAgentId?.model || 'gpt-4o-mini'}</p>
+              <p className="text-[10px] text-emerald-400 font-mono font-medium">
+                {task.assignedAgentId?.model || 'qwen2.5:7b'} (Local)
+              </p>
             </div>
           </div>
         </div>
@@ -203,9 +205,9 @@ export const TaskDetailPage: React.FC = () => {
             </span>
           </div>
           <div>
-            <span className="text-gray-500 block mb-0.5">Estimated Cost</span>
-            <span className="font-bold text-gold text-sm">
-              ${task.costEstimateUSD ? task.costEstimateUSD.toFixed(4) : '0.000'}
+            <span className="text-gray-500 block mb-0.5">Inference Cost</span>
+            <span className="font-bold text-emerald-400 text-sm">
+              $0.00 (Local Free)
             </span>
           </div>
           <div>
